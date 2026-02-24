@@ -27,14 +27,13 @@ Credit scoring bias analysis for DEGO course.
 
 
 ## Repository Structure
-project-team14/
+dego-project-team14/
 ├── README.md
 ├── data/
-│   └── raw_credit_applications.json
 ├── notebooks/
 │   ├── 01-data-engineer.ipynb
-│   ├── 02-bias-analysis.ipynb
-│   └── 03-privacy.ipynb
+│   ├── 02-data-scientist.ipynb
+│   └── 03-governance-officer.ipynb
 ├── src/
 │   └── fairness_utils.py
 └── presentation/
