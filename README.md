@@ -25,6 +25,10 @@ Credit scoring bias analysis for DEGO course.
 
 ## Governance Recommendations
 
+#Governance Overview
+
+This section evaluates the dataset and the credit aplications from a governance and regulatory compliance perspective.
+The main objetive is to identify and analyse the PII (Personal Identifiable Information), assess GDPR compliance, classify the system under the EU AI Act and propose governance controls. 
 
 ## Repository Structure
 ```
