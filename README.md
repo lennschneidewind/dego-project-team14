@@ -36,7 +36,8 @@ The ZIP code bias analysis shows that ZIP behaves as a strong proxy for gender r
 
 
 ## Governance Recommendations
-
+###EU AI Act Reference
+Under Annex III of the EU AI Act, AI systems used for credit scoring and evaluation of creditworthiness are classified as High-Risk AI systems. This classification imposes substantial compliance obligations on providers and deployers, e.g., a robust data governance and quality control, human oversight measures a documented risk management system or transparency and user information requirements. The fairness metrics computed in 02-data-scientist.ipynb(Disparate Impact ratio and Demographic Parity) are directly relevant. Under the EU AI Act, high-risk systems must demonstrate they do not produce discriminatory outcomes across protected groups (gender, age). Those findings should be reviewed as part of any conformity assessment.
 
 ## Repository Structure
 ```
