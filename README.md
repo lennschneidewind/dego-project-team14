@@ -36,6 +36,25 @@ The ZIP code bias analysis shows that ZIP behaves as a strong proxy for gender r
 
 
 ## Governance Recommendations
+###Governance Overview
+This section evaluates the dataset and credit scoring model from a governance and regulatory compliance perspective.
+The main objetive is to identify and analyse the PII (Personal Identifiable Information), assess GDPR compliance, classify the system under the EU AI Act and propose governance controls.
+
+###Identification of the Data
+Identification of Personal Data (PII) Under the Article 4 of the GDPR, personal data is means “any informations relating to an identified or identifiable natural person (the data subject)”, directly or indirectly. These identifiers has one or more factors related with physical, cultural, economic or social identity of a (natural) person.  Based on this definition, the dataset used for the credit score analysis contains some attributes that are considered as Personal Identifiable Information. 
+
+Direct identifiers enable to identify an individual immediately such as:
+- full_name - that directly reveals the identity of the individual.
+- email - a unique contact identifier linked to a specific person.
+- ssn (social security number) - a unique national identification number that unequivocally identifies an individual in a whole national system.
+These fields present a high identification risk and require strict protection of the data, including acess, control and lawful processing, according to Art. 6 of GDPR.
+
+Indirect identifiers includes attributes that may not identify a person directly or indepently, just combined with other data. In this case, the attributes are quasi-identifiers that significantly increases (re-)identification risk when combined with other attributes such as demographic data. For example:
+- ip_adress
+- date_of_birth
+- zip_code
+Even tough these fields are not always uniquely identifying on their own, they relate to identifiable individuals when processed in combination, under the scope of GDPR.
+
 
 
 ## Repository Structure
