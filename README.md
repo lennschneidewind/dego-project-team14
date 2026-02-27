@@ -67,6 +67,13 @@ The use of personal data in credit scoring must be assessed based on the key GDP
 ### EU AI Act Reference
 Under Annex III of the EU AI Act, AI systems used for credit scoring and evaluation of creditworthiness are classified as High-Risk AI systems. This classification imposes substantial compliance obligations on providers and deployers, e.g., a robust data governance and quality control, human oversight measures a documented risk management system or transparency and user information requirements. The fairness metrics computed in 02-data-scientist.ipynb (Disparate Impact ratio and Demographic Parity) are directly relevant. Under the EU AI Act, high-risk systems must demonstrate they do not produce discriminatory outcomes across protected groups (gender, age). Those findings should be reviewed as part of any conformity assessment.
 
+### Proposed Governance Controls
+In the case of NovaCred, since it works high-risk personal data and its processing for a credit application, these are the suggested governance controls to ensure regulatory complicance, accountability and ethical use: 
+- Audit Trail: Every decision model should be automatically logged with a timestamp, the input features that were used and the output decision (if it was rejected or not). This allows NovaCred to explain any decisions, for customers or for auditory services, creating a traceable history.
+- Human oversight: In borderline cases (e.g., applicants with credit score right at the approval threshold) should be manually reviewed instead of receiving a fully automated decision. This is required, by EU AI Act and GDPR (Article 22), to protect individuals from purely algorithmic decisions that significantly affects them.
+- Consent and Transparency: Applicants must be clearly informed that an algorithm will evaluate their application and give explicit consent, before processing their data through an automated system. This is only lawful, under certain conditions, including the data subject’s consent.
+- Retention and Data Lifecyle Policy: NovaCred must define a maximum retention period (e.g., 5 years), after which all PII fields must be deleted or fully anonymized. This is required by the Storage Limitation Principle (Article 5) that, as previously said, prohibits keeping personal information longer than necessary for its original purpose.
+
 
 ## Repository Structure
 ```
