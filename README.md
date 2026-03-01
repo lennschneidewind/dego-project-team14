@@ -19,58 +19,35 @@ Credit scoring bias analysis for DEGO course.
 
 
 ## Bias Detection & Fairness
-# Gender bias – disparate impact
 
-We first normalize `applicant_info.gender` into a cleaned `gender_clean` field with the categories `Male` and `Female` (mapping `M`→`Male` and `F`→`Female`, keeping other values as is). Records with missing or invalid gender remain in the dataset but are excluded when we need a clear binary comparison.
+### Gender bias – disparate impact
+
+We normalize `applicant_info.gender` into a cleaned `gender_clean` field with the categories `Male` and `Female` (mapping `M`→`Male` and `F`→`Female`, keeping other values as is). Records with missing or invalid gender remain in the dataset but are excluded when we need a clear binary comparison.
 
 - Approval rate (Male): **65.7%**
 - Approval rate (Female): **50.6%**
 - Disparate impact ratio (Female vs Male): **0.77**
+- Demographic parity difference (Female − Male): **−15.1 percentage points**
 
-The disparate impact ratio is defined as the approval rate of the unprivileged group divided by the approval rate of the privileged group.[file:1] Using females as the unprivileged group and males as the privileged group, our DI of 0.77 is below the standard 0.80 “four‑fifths rule” threshold, suggesting potential disparate impact against female applicants that requires governance attention.
+A disparate impact ratio of 0.77 (female approval rate divided by male approval rate) is below the 0.80 four‑fifths‑rule threshold, indicating potential disparate impact against female applicants that requires governance attention.[file:1] The demographic parity gap of roughly −15 percentage points reinforces that women are materially less likely to be approved than men. Among approved loans, average interest rates and approved amounts are similar for male and female borrowers, so the main fairness concern is the **probability of approval**, not pricing differences among those who are approved.
 
-We also compute demographic parity difference (female approval rate minus male approval rate), which is **−15.1 percentage points**, reinforcing that female applicants are approved at a materially lower rate. In the notebook, we recommend a two‑proportion z‑test to statistically assess whether this difference is likely due to random variation or reflects a systematic pattern.
+### Age‑based approval patterns
 
-From a fairness standpoint, gender should not be used as a model feature, and these metrics (disparate impact and demographic parity difference) should be monitored over time to detect any worsening of gender disparities.[file:1]
+To analyze age, we convert `applicant_info.date_of_birth` to a proper datetime and compute approximate age at application. Invalid or missing dates are set to `NaT`, and the corresponding ages are `NaN`; these records are excluded from age‑band comparisons but are documented as a data‑quality limitation (about **32%** of records), since missing age can hide or distort evidence of age‑related bias.[file:1]
 
-# Age‑based approval patterns
+We group applicants into three age bands with the following approval rates:
 
-To analyze age, we convert `applicant_info.date_of_birth` to a proper datetime and compute approximate age at application. Invalid or missing dates are set to `NaT`, and the corresponding ages are `NaN`; these records are excluded from age‑band comparisons but remain a documented data‑quality limitation.
+- **<30**: **39.7%**
+- **30–50**: **62.3%**
+- **50+**: **61.9%**
 
-We group applicants into three age bands:
-
-- **<30**
-- **30–50**
-- **50+**
-
-Observed approval rates:
-
-- <30: **39.7%**
-- 30–50: **62.3%**
-- 50+: **61.9%**
-
-These patterns show that younger applicants are much less likely to be approved than older ones for the same product. Treating the <30 group as unprivileged and the 30–50 group as privileged, the resulting disparate impact ratio is well below 0.8, pointing to potential age‑related disparities.[file:1] We recommend complementing this with a simple multivariate analysis (e.g., logistic regression including age plus income, credit history months, and debt‑to‑income) to check whether the penalty for younger applicants persists after controlling for financial risk factors.
-
-# Proxy discrimination – ZIP code as a proxy for gender
-
-We then investigate whether `zip_code` can act as a proxy for gender. Aggregating applications by ZIP and gender shows that several ZIP codes in our sample are effectively associated with a single gender (for example, ZIPs where all applications are male, or all are female).
-
-This means that even if the explicit gender field is removed from the model, a classifier using ZIP could still infer gender with high confidence. In other words, ZIP behaves as a proxy for gender, and using it as a feature can reproduce gender disparities while appearing neutral.[file:1] For this reason, we recommend treating ZIP as a high‑risk feature in the model: its use should be justified, constrained (e.g., coarsened to regions), or monitored with additional fairness checks.
-
-
-### Gender bias – disparate impact
-
-The gender bias analysis normalizes the raw gender field into consistent Male and Female categories, excluding ambiguous values from binary comparisons, and then compares approval rates across these groups. Female applicants exhibit a substantially lower loan approval rate (approximately 51% versus 66% for males), a disparate impact ratio of about 0.77 (below the 0.80 four‑fifths rule), and a demographic parity gap of roughly −15 percentage points, indicating potential disparate impact against women that warrants mitigation and ongoing monitoring.
-
-### Age-based approval patterns
-
-The age bias analysis groups applicants into three age bands: <30, 30–50, and 50+, and compares approval rates across these segments. Applicants under 30 have a markedly lower approval rate (around 40% versus about 62% for both 30–50 and 50+), leading to a disparate impact ratio (younger vs. 30–50 group) well below the 0.80 four‑fifths rule threshold, which signals a potential age‑related disparity that should be addressed through appropriate governance and monitoring.
-
-Age-related bias analysis relies on a cleaned age variable derived from applicant_info.date_of_birth, which is converted to a proper datetime type and used to compute approximate applicant ages. Invalid or missing dates are mapped to NaT (and thus NaN ages), resulting in about 32% of records being excluded from age‑group approval rate calculations; this substantial proportion of missing age information is documented as a data‑quality limitation, as it can obscure or distort evidence of age‑related bias if not explicitly acknowledged.
+Treating applicants **<30** as the unprivileged group, the disparate impact ratios for <30 vs 30–50 and <30 vs 50+ are both well below 0.8, signalling a strong age‑related disparity that warrants governance attention.[file:1] In contrast, 30–50 and 50+ have very similar approval rates. For approved loans only, average interest rates and approved amounts are broadly comparable across age bands, so—as with gender—the key issue is who gets approved rather than how approved customers are treated. We recommend complementing this with multivariate analysis (e.g., including age, income, credit‑history months, and debt‑to‑income) to test whether the penalty for younger applicants persists after controlling for financial risk factors.
 
 ### Proxy discrimination – ZIP code as a proxy for gender
 
-The ZIP code bias analysis shows that ZIP behaves as a strong proxy for gender rather than a neutral geographic feature. In the filtered sample (ZIPs with at least 5 applications), none of the ZIP codes contained both male and female applicants; all 15 ZIP codes were effectively single‑gender, with a “purity” of 1.0 (for example, ZIP 10004 has 6 male and 0 female applications). As a result, a model using ZIP as an input could infer gender with very high confidence and reproduce gender disparities even if the explicit gender variable were removed, so ZIP should be treated as a high‑risk feature whose use requires strong justification, possible coarsening (e.g., to broader regions), and close monitoring for indirect discrimination.
+We investigate whether `zip_code` can act as a proxy for gender. Aggregating applications by ZIP and `gender_clean` shows that, in the filtered sample of ZIPs with at least 5 applications, **none** of the ZIP codes contain both male and female applicants; all 15 ZIPs are effectively single‑gender, with a “purity” of 1.0 (for example, ZIP 10004 has 6 male and 0 female applications). This means that even if the explicit gender field is removed from the model, a classifier using ZIP could still infer gender with very high confidence and reproduce gender disparities while appearing neutral.[file:1]
+
+For this reason, ZIP should be treated as a **high‑risk feature**: its use should be strongly justified, potentially coarsened (e.g., to broader regions), and monitored with additional fairness checks to prevent indirect discrimination.
 
 
 ## Governance Recommendations
